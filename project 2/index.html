@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ubiquitination in Plasmodium — Project 2</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #f8f7f4;
+      color: #2c2c2c;
+      line-height: 1.75;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #e4e0d8;
+      padding: 0 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav .brand {
+      font-size: 0.9rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #3a3a3a;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul a {
+      text-decoration: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      color: #666;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: #2c2c2c; }
+
+    /* ── Hero ── */
+    .hero {
+      background: #fff;
+      border-bottom: 1px solid #e4e0d8;
+      padding: 5rem 2.5rem 4rem;
+      text-align: center;
+    }
+    .hero .tag {
+      display: inline-block;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8c7b5e;
+      border: 1px solid #d4c9b0;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: normal;
+      color: #1a1a1a;
+      max-width: 720px;
+      margin: 0 auto 1rem;
+      letter-spacing: -0.01em;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      color: #666;
+      max-width: 560px;
+      margin: 0 auto;
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    section {
+      padding: 4rem 0;
+      border-bottom: 1px solid #e4e0d8;
+    }
+    section:last-of-type { border-bottom: none; }
+
+    .section-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #8c7b5e;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      font-weight: normal;
+      color: #1a1a1a;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.01em;
+    }
+
+    p { margin-bottom: 1rem; color: #444; font-size: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── Stat cards ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: #e4e0d8;
+      border: 1px solid #e4e0d8;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 2.5rem;
+    }
+    .stat {
+      background: #fff;
+      padding: 1.4rem 1.6rem;
+      text-align: center;
+    }
+    .stat .num {
+      font-size: 1.9rem;
+      font-weight: 300;
+      color: #1a1a1a;
+      display: block;
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+    .stat .lbl {
+      font-size: 0.75rem;
+      color: #888;
+      font-family: 'Helvetica Neue', sans-serif;
+      letter-spacing: 0.04em;
+      margin-top: 0.2rem;
+      display: block;
+    }
+
+    /* ── Paper cards ── */
+    .papers { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1rem; }
+
+    .paper-card {
+      background: #fff;
+      border: 1px solid #e4e0d8;
+      border-radius: 4px;
+      padding: 1.8rem 2rem;
+      transition: box-shadow 0.2s;
+    }
+    .paper-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.06); }
+
+    .paper-card .paper-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.7rem;
+    }
+    .paper-card .year {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      color: #8c7b5e;
+      background: #f5f0e8;
+      padding: 0.2rem 0.55rem;
+      border-radius: 2px;
+    }
+    .paper-card .source-tag {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .paper-card h3 {
+      font-size: 1.05rem;
+      font-weight: normal;
+      color: #1a1a1a;
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .paper-card p {
+      font-size: 0.92rem;
+      color: #555;
+      margin-bottom: 1.1rem;
+    }
+
+    .paper-card .paper-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .paper-card .doi {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.75rem;
+      color: #999;
+      letter-spacing: 0.02em;
+    }
+    .paper-card a.link-btn {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.75rem;
+      text-decoration: none;
+      color: #5a7a5a;
+      border: 1px solid #b8cebc;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2px;
+      letter-spacing: 0.04em;
+      transition: background 0.2s, color 0.2s;
+    }
+    .paper-card a.link-btn:hover { background: #5a7a5a; color: #fff; }
+
+    /* ── Footer ── */
+    footer {
+      background: #fff;
+      border-top: 1px solid #e4e0d8;
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.78rem;
+      color: #aaa;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <span class="brand">Project 2</span>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#research">Research Focus</a></li>
+      <li><a href="#papers">Papers</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="tag">Literature Review</span>
+    <h1>Ubiquitination in <em>Plasmodium falciparum</em></h1>
+    <p>Exploring the ubiquitin–proteasome system as a regulatory mechanism and antimalarial drug target.</p>
+  </div>
+
+  <!-- Introduction -->
+  <section id="intro">
+    <div class="container">
+      <p class="section-label">Introduction</p>
+      <h2>About <em>Plasmodium falciparum</em></h2>
+      <p>
+        <em>Plasmodium falciparum</em> is the protozoan parasite responsible for the most severe form of human malaria.
+        Transmitted through the bite of infected female <em>Anopheles</em> mosquitoes, it completes a complex life cycle
+        spanning both the mosquito vector and the human host. Within humans, the parasite undergoes asexual replication
+        inside red blood cells — progressing through ring, trophozoite, and schizont stages — before bursting out to
+        infect new cells, causing the cyclical fevers characteristic of the disease.
+      </p>
+      <p>
+        Malaria caused by <em>P. falciparum</em> remains one of the deadliest infectious diseases globally, claiming
+        hundreds of thousands of lives each year, predominantly in sub-Saharan Africa. The parasite's ability to
+        develop resistance to frontline antimalarials — including artemisinin-based combination therapies — makes the
+        identification of new drug targets an urgent priority.
+      </p>
+      <p>
+        At the molecular level, <em>P. falciparum</em> relies on tightly regulated post-translational modification
+        pathways to orchestrate stage-specific proteome changes. Among these, the ubiquitin–proteasome system (UPS)
+        has emerged as a central regulatory hub governing parasite development, stress responses, and drug
+        susceptibility.
+      </p>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="num">~600,000</span>
+          <span class="lbl">Deaths per year globally</span>
+        </div>
+        <div class="stat">
+          <span class="num">>100</span>
+          <span class="lbl">UPS-related genes in <em>P. falciparum</em></span>
+        </div>
+        <div class="stat">
+          <span class="num">4</span>
+          <span class="lbl">Intraerythrocytic life cycle stages</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Research Focus -->
+  <section id="research">
+    <div class="container">
+      <p class="section-label">Research Focus</p>
+      <h2>The Ubiquitin–Proteasome System in Malaria</h2>
+      <p>
+        Ubiquitination is a post-translational modification in which ubiquitin — a small, highly conserved protein —
+        is covalently attached to target proteins. This modification can direct proteins to the proteasome for
+        degradation, alter their activity, or regulate protein–protein interactions. The process is carried out by a
+        cascade of enzymes: E1 activating enzymes, E2 conjugating enzymes, and E3 ubiquitin ligases that confer
+        substrate specificity.
+      </p>
+      <p>
+        In <em>P. falciparum</em>, the UPS is essential for survival. The parasite encodes multiple E1, E2, and E3
+        enzymes, as well as deubiquitinating enzymes (DUBs) that reverse ubiquitin modifications. Disruption of
+        key UPS components consistently impairs parasite growth and, in several cases, sensitises parasites to
+        artemisinin — highlighting the UPS as both a biological regulator and a promising therapeutic vulnerability.
+      </p>
+    </div>
+  </section>
+
+  <!-- Papers -->
+  <section id="papers">
+    <div class="container">
+      <p class="section-label">Key Literature</p>
+      <h2>5 Selected Papers</h2>
+
+      <div class="papers">
+
+        <div class="paper-card">
+          <div class="paper-meta">
+            <span class="year">2023</span>
+            <span class="source-tag">PubMed</span>
+          </div>
+          <h3>A <em>Plasmodium falciparum</em> RING Finger E3 Ubiquitin Ligase Modifies the Roles of PfMDR1 and PfCRT in Parasite Drug Responses</h3>
+          <p>Knockdown of PfRFUL, a RING finger E3 ubiquitin ligase, rendered <em>P. falciparum</em> more sensitive to mefloquine, piperaquine, amodiaquine, and dihydroartemisinin. The study shows that ubiquitination directly regulates key drug transporter proteins PfMDR1 and PfCRT, linking the UPS to antimalarial drug resistance mechanisms.</p>
+          <div class="paper-footer">
+            <span class="doi">DOI: 10.1128/aac.00821-22</span>
+            <a class="link-btn" href="https://pubmed.ncbi.nlm.nih.gov/36625569/" target="_blank" rel="noopener">View on PubMed</a>
+          </div>
+        </div>
+
+        <div class="paper-card">
+          <div class="paper-meta">
+            <span class="year">2023</span>
+            <span class="source-tag">PubMed</span>
+          </div>
+          <h3>Unusually Divergent Ubiquitin Genes and Proteins in <em>Plasmodium</em> Species</h3>
+          <p>Ubiquitin — among the most conserved proteins in eukaryotes — has undergone unusually rapid sequence divergence in multiple <em>Plasmodium</em> lineages. The RPL40 and RPS27a fusion gene ubiquitins evolved independently in distinct subgenera, and polyubiquitin genes acquired novel codon insertions, revealing lineage-specific evolutionary pressures on the ubiquitin system in malaria parasites.</p>
+          <div class="paper-footer">
+            <span class="doi">DOI: 10.1093/gbe/evad137</span>
+            <a class="link-btn" href="https://pubmed.ncbi.nlm.nih.gov/37481258/" target="_blank" rel="noopener">View on PubMed</a>
+          </div>
+        </div>
+
+        <div class="paper-card">
+          <div class="paper-meta">
+            <span class="year">2017</span>
+            <span class="source-tag">PubMed</span>
+          </div>
+          <h3>Lys48 Ubiquitination During the Intraerythrocytic Cycle of the Rodent Malaria Parasite, <em>Plasmodium chabaudi</em></h3>
+          <p>This study maps Lys48-linked polyubiquitination — the canonical proteasomal degradation signal — across ring, trophozoite, and schizont stages of <em>P. chabaudi</em>. Ubiquitinated proteins peak at the schizont stage and correspond to proteins abundant in earlier trophozoite stages, demonstrating that the UPS coordinates protein turnover and cell-cycle progression throughout the intraerythrocytic cycle.</p>
+          <div class="paper-footer">
+            <span class="doi">DOI: 10.1371/journal.pone.0176533</span>
+            <a class="link-btn" href="https://pubmed.ncbi.nlm.nih.gov/28604779/" target="_blank" rel="noopener">View on PubMed</a>
+          </div>
+        </div>
+
+        <div class="paper-card">
+          <div class="paper-meta">
+            <span class="year">2023</span>
+            <span class="source-tag">PubMed</span>
+          </div>
+          <h3>A <em>Plasmodium falciparum</em> Ubiquitin-Specific Protease (PfUSP) Is Essential for Parasite Survival and Its Disruption Enhances Artemisinin Efficacy</h3>
+          <p>PfUSP, a deubiquitinating enzyme, is shown to be essential for <em>P. falciparum</em> growth and proteostasis. Knockdown significantly increased parasite sensitivity to dihydroartemisinin without affecting chloroquine susceptibility, indicating that PfUSP helps the parasite tolerate artemisinin-induced cellular stress and represents a target to overcome artemisinin resistance.</p>
+          <div class="paper-footer">
+            <span class="doi">DOI: 10.1042/BCJ20220429</span>
+            <a class="link-btn" href="https://pubmed.ncbi.nlm.nih.gov/36511651/" target="_blank" rel="noopener">View on PubMed</a>
+          </div>
+        </div>
+
+        <div class="paper-card">
+          <div class="paper-meta">
+            <span class="year">2024</span>
+            <span class="source-tag">PubMed</span>
+          </div>
+          <h3><em>Plasmodium falciparum</em> Contains Functional SCF and CRL4 Ubiquitin E3 Ligases, and CRL4 Is Critical for Cell Division and Membrane Integrity</h3>
+          <p>This study characterises two functional Cullin-RING E3 ligase complexes in <em>P. falciparum</em> — PfSCF (Cullin-1) and PfCRL4 (Cullin-2). Depletion of PfCullin-2 severely impaired asexual and sexual erythrocytic development and disrupted protein translation, lipid biosynthesis, and membrane integrity, establishing CRL4 as an essential regulator of parasite cell division and a potential drug target.</p>
+          <div class="paper-footer">
+            <span class="doi">DOI: 10.1371/journal.ppat.1012045</span>
+            <a class="link-btn" href="https://pubmed.ncbi.nlm.nih.gov/38416790/" target="_blank" rel="noopener">View on PubMed</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Project 2 &mdash; Ubiquitination in <em>Plasmodium</em> &mdash; Literature Review
+  </footer>
+
+</body>
+</html>
